@@ -1,0 +1,76 @@
+name: Tournament Deploy
+on: 
+    push:
+        branches: 
+            - main
+    pull_request:
+        branches:
+            - main
+    workflow_dispatch:
+jobs:
+    build: 
+        runs-on: ubuntu-latest
+        steps:
+            - name: Build
+              run: echo Building the app...
+              
+    deploy-development:
+        runs-on: ubuntu-latest
+        environment:
+            name: development
+            url: ${{vars.URL}}
+        needs: build
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v1
+            - name: Hostgator Deployment
+              uses: easingthemes/ssh-deploy@main
+              with:
+                SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
+                ARGS: "-rlgoDzvc --delete"
+                SOURCE: "/"
+                REMOTE_HOST: ${{vars.REMOTE_HOST}}
+                REMOTE_USER: ${{vars.REMOTE_USER}}
+                REMOTE_PORT: ${{vars.REMOTE_PORT}}
+                TARGET: ${{vars.TARGET}}
+
+    deploy-staging:
+        runs-on: ubuntu-latest
+        environment:
+            name: development
+            url: ${{vars.URL}}
+        needs: deploy-development
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v1
+            - name: Hostgator Deployment
+              uses: easingthemes/ssh-deploy@main
+              with:
+                SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
+                ARGS: "-rlgoDzvc --delete"
+                SOURCE: "/"
+                REMOTE_HOST: ${{vars.REMOTE_HOST}}
+                REMOTE_USER: ${{vars.REMOTE_USER}}
+                REMOTE_PORT: ${{vars.REMOTE_PORT}}
+                TARGET: ${{vars.TARGET}}
+
+    deploy-production:
+        runs-on: ubuntu-latest
+        environment:
+            name: development
+            url: ${{vars.URL}}
+        needs: deploy-staging
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v1
+            - name: Hostgator Deployment
+              uses: easingthemes/ssh-deploy@main
+              with:
+                SSH_PRIVATE_KEY: ${{secrets.SERVER_SSH_KEY}}
+                ARGS: "-rlgoDzvc --delete"
+                SOURCE: "/"
+                REMOTE_HOST: ${{vars.REMOTE_HOST}}
+                REMOTE_USER: ${{vars.REMOTE_USER}}
+                REMOTE_PORT: ${{vars.REMOTE_PORT}}
+                TARGET: ${{vars.TARGET}}
+            

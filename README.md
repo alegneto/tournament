@@ -1,2 +1,2 @@
 # tournament
-Aplicativo de Gerenciamento de Torneios Esportivos - Futebol, Basquete, Vôlei
+Aplicativo de Gerenciamento de Torneios Esportivos - Futebol e Futsal
